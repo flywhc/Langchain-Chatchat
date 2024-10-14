@@ -2,6 +2,7 @@ import click
 from pathlib import Path
 import shutil
 import typing as t
+import multiprocessing
 
 from chatchat.startup import main as startup_main
 from chatchat.init_database import main as kb_main, create_tables, folder2db
@@ -81,4 +82,5 @@ main.add_command(kb_main, "kb")
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     main()

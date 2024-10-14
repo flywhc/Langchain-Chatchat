@@ -92,8 +92,8 @@ def run_webui(
     host = Settings.basic_settings.WEBUI_SERVER["host"]
     port = Settings.basic_settings.WEBUI_SERVER["port"]
 
-    script_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "webui.py")
-
+    script_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "webui_pages", "webui.py")
+    logger.info(f"Webui script_dir: {script_dir}")
     flag_options = {
         "server_address": host,
         "server_port": port,
@@ -104,7 +104,7 @@ def run_webui(
         "global_disableWatchdogWarning": None,
         "global_disableWidgetStateDuplicationWarning": None,
         "global_showWarningOnDirectExecution": None,
-        "global_developmentMode": None,
+        "global_developmentMode": False,
         "global_logLevel": None,
         "global_unitTest": None,
         "global_suppressDeprecationWarnings": None,
@@ -117,7 +117,7 @@ def run_webui(
         "logger_enableRich": None,
         "client_caching": None,
         "client_displayEnabled": None,
-        "client_showErrorDetails": None,
+        "client_showErrorDetails": True,
         "client_toolbarMode": None,
         "client_showSidebarNavigation": None,
         "runner_magicEnabled": None,
@@ -129,7 +129,7 @@ def run_webui(
         "runner_enumCoercion": None,
         "server_folderWatchBlacklist": None,
         "server_fileWatcherType": "none",
-        "server_headless": None,
+        "server_headless": False,
         "server_runOnSave": None,
         "server_allowRunOnSave": None,
         "server_scriptHealthCheckEnabled": None,
@@ -177,8 +177,14 @@ def run_webui(
         1024 * 1024 * 1024 * 3,
     )
     logging.config.dictConfig(logging_conf)  # type: ignore
+    os.chdir(os.path.dirname(__file__))
     bootstrap.load_config_options(flag_options=flag_options)
-    bootstrap.run(script_dir, False, args, flag_options)
+    from streamlit.web import cli
+# add the _main_run_clExplicit into %USERPROFILE%\.conda\envs\%CONDA_ENV_NAME%\Lib\site-packages\site-packages\streamlit\web\cli.py
+# def _main_run_clExplicit(file, is_hello=False, args=[], flag_options={}):
+#    bootstrap.run(file, is_hello, args, flag_options)    
+    cli._main_run_clExplicit(script_dir, args=['run'])
+    
     started_event.set()
 
 
